@@ -9,8 +9,8 @@ const OPENWEATHERMAP_API_KEY = process.env.OPENWEATHERMAP_API_KEY;
 const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 const citySubscriptions = new Map(); // Store user chat IDs and their preferred cities
 
-// Schedule a job to send weather updates every minute
-schedule.scheduleJob('* * * * *', async () => {
+// Schedule a job to send hourly weather updates
+schedule.scheduleJob('0 * * * *', async () => {
   await sendWeatherUpdatesToSubscribers();
 });
 
@@ -23,10 +23,10 @@ bot.on('message', async (msg) => {
     // User requested weather update
     await sendWeatherUpdate(chatId);
   } else if (userInput === '/subscribe') {
-    // User wants to subscribe for daily updates
+    // User wants to subscribe for hourly updates
     await subscribeUser(chatId);
   } else if (userInput === '/unsubscribe') {
-    // User wants to unsubscribe from daily updates
+    // User wants to unsubscribe from hourly updates
     await unsubscribeUser(chatId);
   } else if (userInput.startsWith('/setcity ')) {
     // User wants to set their preferred city
@@ -71,7 +71,7 @@ async function subscribeUser(chatId) {
   if (currentCity !== undefined && currentCity !== null) {
     // Subscribe the user (store their chat ID in subscriptions)
     citySubscriptions.set(chatId, currentCity);
-    bot.sendMessage(chatId, 'You are now subscribed to daily weather updates.');
+    bot.sendMessage(chatId, 'You are now subscribed to hourly weather updates.');
   } else {
     bot.sendMessage(chatId, "Please set your preferred city using '/setcity <city>' before subscribing to weather updates.");
   }
@@ -82,7 +82,7 @@ async function unsubscribeUser(chatId) {
   if (citySubscriptions.has(chatId)) {
     // Unsubscribe the user (remove their chat ID from subscriptions)
     citySubscriptions.delete(chatId);
-    bot.sendMessage(chatId, 'You have unsubscribed from daily weather updates.');
+    bot.sendMessage(chatId, 'You have unsubscribed from hourly weather updates.');
   } else {
     bot.sendMessage(chatId, 'You are not subscribed to weather updates.');
   }
