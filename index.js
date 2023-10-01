@@ -10,7 +10,7 @@ const bot = new TelegramBot(TELEGRAM_TOKEN, { polling: true });
 const citySubscriptions = new Map(); // Store user chat IDs and their preferred cities
 
 // Schedule a job to send hourly weather updates
-schedule.scheduleJob('0 * * * *', async () => {
+schedule.scheduleJob('* * * * *', async () => {
   await sendWeatherUpdatesToSubscribers();
 });
 
